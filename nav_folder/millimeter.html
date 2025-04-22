@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Millimeter Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    
+    <!-- Title with Year Selection in One Line (Added Margin) -->
+    <div>
+        <!-- Title and Year Selection -->
+        <div class="flex items-center space-x-4 mt-24 ml-4">
+            <h1 class="text-lg font-semibold text-gray-800">🌧 Actual Rainfall in Millimeter (mm) for JANUARY to DECEMBER</h1>
+            
+            <!-- Year Dropdown -->
+            <select id="yearSelect" class="p-2 border border-gray-400 rounded-lg bg-white shadow-md text-gray-800">
+                <option value="2000">2000</option>
+                <option value="2001" selected>2001</option> <!-- Default year -->
+                <option value="2002">2002</option>
+                <option value="2003">2003</option>
+                <option value="2004">2004</option>
+                <option value="2005">2005</option>
+                <option value="2006">2006</option>
+                <option value="2007">2007</option>
+                <option value="2008">2008</option>
+                <option value="2009">2009</option>
+                <option value="2010">2010</option>
+                <option value="2011">2011</option>
+                <option value="2012">2012</option>
+                <option value="2013">2013</option>
+                <option value="2014">2014</option>
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+            </select>
+        </div>
+    
+        <!-- Image Gallery -->
+        <div id="gallery" class="border-4 border-gray-500 p-6 rounded-lg shadow-lg bg-white mt-6 ml-4 mr-4">
+            <div class="grid grid-cols-4 gap-4"></div>
+        </div>
+
+    </div>
+    
+
+    <script>
+       function openFullImage(imageSrc) {
+            let modal = document.createElement("div");
+            modal.classList.add("fixed", "top-0", "left-0", "w-full", "h-full", "bg-black", "bg-opacity-75", "flex", "items-center", "justify-center");
+            
+            // ✅ Ensure modal is above everything
+            modal.style.zIndex = "1000";  
+
+            let fullImage = document.createElement("img");
+            fullImage.src = imageSrc;
+            fullImage.classList.add("max-w-full", "max-h-[90vh]", "rounded-lg"); // ✅ Prevents image from going off-screen
+
+            let closeButton = document.createElement("span");
+            closeButton.innerHTML = "&times;";
+            closeButton.classList.add("absolute", "top-5", "right-5", "text-white", "text-4xl", "cursor-pointer", "bg-gray-800", "p-2", "rounded-full"); // ✅ Ensures visibility
+            closeButton.style.zIndex = "1001"; // ✅ Keep close button above everything
+            closeButton.onclick = function () {
+                document.body.removeChild(modal);
+            };
+
+            modal.appendChild(fullImage);
+            modal.appendChild(closeButton);
+            document.body.appendChild(modal);
+        }
+
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            function updateGallery() {
+                let dropdown = document.getElementById("yearSelect");
+                let galleryContainer = document.getElementById("gallery");
+    
+                if (!dropdown || !galleryContainer) {
+                    console.error("Dropdown or gallery container not found!");
+                    return;
+                }
+    
+                galleryContainer.innerHTML = ""; // Clear existing images
+                const selectedYear = dropdown.value;
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+                let grid = document.createElement("div");
+                grid.classList.add("grid", "grid-cols-4", "gap-4");
+    
+                for (let month of months) {
+                    let img = document.createElement("img");
+                    img.src = `${window.location.origin}/DATA/MAPS_${selectedYear}/${month}_${selectedYear}.jpg`;
+                    img.alt = `${month} ${selectedYear} Map`;
+                    img.classList.add("rounded-lg", "shadow-md", "hover:scale-105", "transition");
+    
+                    // ✅ Ensure openFullImage is called correctly
+                    img.onclick = function () {
+                        openFullImage(img.src);
+                    };
+    
+                    grid.appendChild(img);
+                }
+    
+                galleryContainer.appendChild(grid);
+            }
+    
+            // Ensure script runs AFTER the page loads dynamically
+            setTimeout(() => {
+                let dropdown = document.getElementById("yearSelect");
+                if (dropdown) {
+                    dropdown.addEventListener("change", updateGallery);
+                    updateGallery(); // Load images initially
+                } else {
+                    console.error("Dropdown not found on page.");
+                }
+            }, 500);
+        });
+    </script>
+    
+    
+    
+
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <style>
+        /* Sidebar Default (Collapsed) */
+        #sidebar {
+            width: 4rem; /* Small width */
+            transition: width 0.3s ease-in-out;
+        }
+        /* Sidebar Hover (Expanded) */
+        #sidebar:hover {
+            width: 16rem; /* Expand width */
+        }
+        /* Hide text but reserve space */
+        .sidebar-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out;
+        }
+        /* Show text when sidebar is hovered */
+        #sidebar:hover .sidebar-text {
+            opacity: 1;
+            width: auto;
+        }
+        /* Main content shift when sidebar expands */
+        main {
+            transition: margin-left 0.3s ease-in-out;
+        }
+        #sidebar:hover + main {
+            margin-left: 16rem;
+        }
+
+        /* PST time styles */
+        .pst-time {
+            color: red;
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0;
+            position: fixed;
+            top: 70px;
+            right: 10px;
+            z-index: 3;
+        }
+        #time {
+            font-size: 16px;
+            text-align: center;
+        }
+        #date {
+            text-align: center;
+        }
+        .pst-box {
+            background-color: white;
+            border: 1px solid red;
+            padding: 5px 12px;
+            font-size: 10px;
+            color: red;
+            border-radius: 4px;
+            text-align: left;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex h-screen">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-[#22313f] h-screen fixed overflow-hidden">
+        <nav class="mt-16 space-y-2 text-white text-sm md:text-lg">
+        <a href="#" onclick="loadPage('nav_folder/home.html')" class="flex items-center px-4 py-3 hover:bg-gray-600 rounded">
+                🏠 <span class="ml-3 sidebar-text">Home</span>
+            </a>
+            <a href="#" onclick="loadPage('nav_folder/millimeter.html')" class="flex items-center px-4 py-3 hover:bg-gray-600 rounded">
+                📏 <span class="ml-3 sidebar-text">Millimeter</span>
+            </a>
+            <a href="#" onclick="loadPage('nav_folder/percentage.html')" class="flex items-center px-4 py-3 hover:bg-gray-600 rounded">
+                📊 <span class="ml-3 sidebar-text">Percentage</span>
+            </a>
+
+            <!-- Dropdown -->
+            <div>
+                <button class="flex items-center w-full px-4 py-3 hover:bg-gray-600 rounded" onclick="toggleDropdown()">
+                    🌧️ <span class="ml-3 sidebar-text">Rainfall Summary ▼</span>
+                </button>
+                <div class="hidden space-y-1 pl-10 sidebar-text" id="dropdown">
+                    <a href="#" onclick="loadPage('nav_folder/monthly.html')" class="block py-1 hover:text-gray-300">📅 Monthly</a>
+                    <a href="#" onclick="loadPage('nav_folder/quarterly.html')" class="block py-1 hover:text-gray-300">🌱 Quarterly</a>
+                    <a href="#" onclick="loadPage('nav_folder/seasonal.html')" class="block py-1 hover:text-gray-300">🍂 Seasonal</a>
+                    <a href="#" onclick="loadPage('nav_folder/annual.html')" class="block py-1 hover:text-gray-300">📆 Annual</a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-16 transition-all duration-300">
+        <!-- Fixed Header -->
+        <header class="bg-white shadow-md h-16 flex items-center px-6 fixed w-full left-0 top-0 z-10">
+            <img src="LOGO_nobg.png" alt="Logo" class="h-12 object-contain">
+        </header>
+
+        <!-- Philippine Standard Time (PST) -->
+        <div class="pst-time">
+            <div class="pst-box">
+                <b>Philippine Standard Time</b>
+                <p id="time"></p>
+                <p id="date"></p>
+            </div>
+        </div>
+
+        <!-- Page Content (Dynamically Loaded) -->
+        <div id="content" class="mt-16">
+            <img src="Welcome_Pic.png" alt="Welcome Image" class="w-full h-full object-cover">
+        </div>
+    </main>
+    
+    <!-- JavaScript for Dynamic Loading & PST -->
+    <script>
+        function loadPage(page) {
+            fetch(page)
+                .then(response => response.text())
+                .then(html => {
+                    let contentDiv = document.getElementById("content");
+                    contentDiv.innerHTML = html;
+
+                    // Extract and execute scripts manually
+                    let scripts = contentDiv.querySelectorAll("script");
+                    scripts.forEach(script => {
+                        let newScript = document.createElement("script");
+                        newScript.textContent = script.textContent;
+                        document.body.appendChild(newScript);
+                    });
+
+                    // ✅ Run millimeter script when millimeter.html is loaded
+                    if (page.includes("millimeter.html")) {
+                        initializeMillimeterScript();
+                    }
+                })
+                .catch(error => console.error("Error loading the page:", error));
+        }
+
+
+
+        function initializeMillimeterScript() {
+            setTimeout(() => {
+                let dropdown = document.getElementById("yearSelect");
+                let galleryContainer = document.getElementById("gallery");
+
+                if (!dropdown || !galleryContainer) {
+                    console.error("Dropdown or gallery container not found!");
+                    return;
+                }
+
+                function updateGallery() {
+                    const selectedYear = dropdown.value;
+                    galleryContainer.innerHTML = "";
+
+                    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    let grid = document.createElement("div");
+                    grid.classList.add("grid", "grid-cols-4", "gap-4");
+
+                    for (let month of months) {
+                        let img = document.createElement("img");
+                        img.src = `${window.location.origin}/DATA/MAPS_${selectedYear}/${month}_${selectedYear}.jpg`;
+                        img.alt = `${month} ${selectedYear} Map`;
+                        img.classList.add("rounded-lg", "shadow-md", "hover:scale-105", "transition");
+
+                        img.onclick = function () {
+                            openFullImage(img.src);
+                        };
+
+                        grid.appendChild(img);
+                    }
+
+                    galleryContainer.appendChild(grid);
+                }
+
+                dropdown.addEventListener("change", updateGallery);
+                updateGallery();
+            }, 500);
+        }
+
+
+
+
+
+
+
+        function toggleDropdown() {
+            document.getElementById('dropdown').classList.toggle('hidden');
+        }
+
+        function updatePST() {
+            const now = new Date();
+            const pst = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
+
+            let hours = pst.getHours();
+            const minutes = pst.getMinutes().toString().padStart(2, "0");
+            const seconds = pst.getSeconds().toString().padStart(2, "0");
+            const ampm = hours >= 12 ? "PM" : "AM";
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+
+            const time = `${hours}:${minutes}:${seconds} ${ampm}`;
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const date = pst.toLocaleDateString("en-US", options);
+
+            document.getElementById("time").textContent = time;
+            document.getElementById("date").textContent = date;
+        }
+
+        updatePST();
+        setInterval(updatePST, 1000);
+    </script>
+
+</body>
+</html>
