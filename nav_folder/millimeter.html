@@ -94,10 +94,12 @@
     
                 let grid = document.createElement("div");
                 grid.classList.add("grid", "grid-cols-4", "gap-4");
+
+                const repoName = "RAINFALL_MAPS"; 
     
                 for (let month of months) {
                     let img = document.createElement("img");
-                    img.src = `${window.location.origin}/DATA/MAPS_${selectedYear}/${month}_${selectedYear}.jpg`;
+                    img.src = `${window.location.origin}/${repoName}/Data/MAPS_${selectedYear}/${month}_${selectedYear}.jpg`;
                     img.alt = `${month} ${selectedYear} Map`;
                     img.classList.add("rounded-lg", "shadow-md", "hover:scale-105", "transition");
     
@@ -111,7 +113,8 @@
     
                 galleryContainer.appendChild(grid);
             }
-    
+   
+            
             // Ensure script runs AFTER the page loads dynamically
             setTimeout(() => {
                 let dropdown = document.getElementById("yearSelect");
