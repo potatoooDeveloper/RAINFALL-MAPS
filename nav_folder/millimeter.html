@@ -95,12 +95,12 @@
                 let grid = document.createElement("div");
                 grid.classList.add("grid", "grid-cols-4", "gap-4");
 
-                const repoName = "RAINFALL-MAPS"; 
+                const repoURL = "https://raw.githubusercontent.com/potatoooDeveloper/RAINFALL-MAPS/blob/main";
     
                 for (let month of months) {
                     let img = document.createElement("img");
                     //img.src = `${window.location.origin}/${repoName}/DATA/MAPS_${selectedYear}/${month}_${selectedYear}.jpg`;
-                    const imgSrc = `${window.location.origin}/${repoName}/DATA/MAPS_${selectedYear}/${month}_${selectedYear}.jpg`;
+                    const imgSrc = `${repoURL}/DATA/MAPS_${selectedYear}/${month}_${selectedYear}.jpg`;
                     console.log(imgSrc);
 
 
