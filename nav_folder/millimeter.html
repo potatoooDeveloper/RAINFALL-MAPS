@@ -99,13 +99,17 @@
     
                 for (let month of months) {
                     let img = document.createElement("img");
-                    img.src = `${window.location.origin}/${repoName}/DATA/MAPS_${selectedYear}/${month}_${selectedYear}.jpg`;
+                    //img.src = `${window.location.origin}/${repoName}/DATA/MAPS_${selectedYear}/${month}_${selectedYear}.jpg`;
+                    const imgSrc = `${window.location.origin}/${repoName}/DATA/MAPS_${selectedYear}/${month}_${selectedYear}.jpg`;
+                    console.log(imgSrc);
+
+
                     img.alt = `${month} ${selectedYear} Map`;
                     img.classList.add("rounded-lg", "shadow-md", "hover:scale-105", "transition");
     
                     // ✅ Ensure openFullImage is called correctly
                     img.onclick = function () {
-                        openFullImage(img.src);
+                        openFullImage(img.src);                        
                     };
     
                     grid.appendChild(img);
